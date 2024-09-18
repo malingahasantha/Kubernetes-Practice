@@ -19,26 +19,28 @@
 9. Ensure that the Pods use the image nginx:1.23.0.
 
 Answers as follows:
-1.  
-![Create a Deployment named nginx with 3 replicas.](deployment_1.png)
 
-2. 
-![List the Deployment and ensure the correct number of replicas is running.](deployment_1.1.png)
+1. Create a Deployment named nginx with 3 replicas.  
+![Create a Deployment named nginx with 3 replicas.](/img/deployment_1.png)
 
-3. &  4.
-![Update the image to nginx:1.23.4.](deployment_2.png)
+2. List the Deployment and ensure the correct number of replicas is running.
+![List the Deployment and ensure the correct number of replicas is running.](/img/deployment_1.1.png)
 
-5. 
-![Assign the change cause "Pick up patch version" to the revision.](change_cause_5.png)
+3. Update the image to nginx:1.23.4. 
+4. Verify that the change has been rolled out to all replicas.
+![Update the image to nginx:1.23.4.](/img/deployment_2.png)
 
-6. 
-![Scale the Deployment to 5 replicas.](scale_deployment.png)
+5. Assign the change cause "Pick up patch version" to the revision.
+![Assign the change cause "Pick up patch version" to the revision.](/img/change_cause_5.png)
 
-7. 
-![Have a look at the Deployment rollout history.](look_deployment_history.png)
+6. Scale the Deployment to 5 replicas.
+![Scale the Deployment to 5 replicas.](/img/scale_deployment.png)
 
-8. 
-![Revert the Deployment to revision 1.](revert_deployment.png)
+7. Have a look at the Deployment rollout history.
+![Have a look at the Deployment rollout history.](/img/look_deployment_history.png)
 
-9. 
-![Ensure that the Pods use the image nginx:1.23.0.](pods_use_previous_version.png)
+8. Revert the Deployment to revision 1.
+![Revert the Deployment to revision 1.](/img/revert_deployment.png)
+
+9. Ensure that the Pods use the image nginx:1.23.0.
+![Ensure that the Pods use the image nginx:1.23.0.](/img/pods_use_previous_version.png)
