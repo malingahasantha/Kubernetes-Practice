@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: nginx-task
+  labels: 
+    env: rsdemo
+spec:
+  template:
+    metadata:
+      labels:
+        env: rsdemo
+      name: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-task08
+  replicas: 3
+  selector:
+    matchLabels: 
+      env: rsdemo

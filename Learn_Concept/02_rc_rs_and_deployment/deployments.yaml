@@ -1,0 +1,27 @@
+
+
+apiVersion: apps/v1 
+kind: Deployment
+metadata: 
+  name: nginx-deploy
+  labels:
+    env: demo
+spec: 
+  template:
+    metadata:
+      labels: 
+        env: demo
+      name: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-rspod
+  replicas: 3
+  selector: 
+    matchLabels: 
+      env: demo 
+
+
+# If we have to make some changers, if we need to change the image from nginx current version to nginx 1.9.1
+# One way is do the change in yaml file and re apply.
+# Other way is do the update in live environment.

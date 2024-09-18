@@ -1,0 +1,31 @@
+# Replication Controller is the legacy version. Replica Set is the never verison. 
+# Replication Controller is only be use to manage the resources the pods that were created as part of that Replica Controller.
+# But with Replica Set we can manage the existing pods as well.
+# We do that with the help of the another field called selector. Inside that we do match labels. 
+# So we match the labels of the pods that we want to be part of this perticular replica set.
+
+apiVersion: apps/v1 # group/version - here we have to specify the group as well
+kind: ReplicaSet
+metadata: 
+  name: nginx-rs
+  labels:
+    env: demo
+spec: 
+  template:
+    metadata:
+      labels: 
+        env: demo
+      name: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-rspod
+  replicas: 3
+  selector: 
+    matchLabels: 
+      env: demo # Every pod that is running with this particular label will now be manage by the Replica Set.
+
+# If we need to change the count of replicas, we can do the change in yaml file "replica: 5" and save and apply the change again. 
+# Then it will get apply the change make the change instantly.
+# another way of do this change is instead of updating the yaml file you can do the change live object.
+# kubectl edit  
