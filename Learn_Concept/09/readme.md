@@ -75,6 +75,7 @@ Now let's create the deployment. Let's get a copy of the previous desployment in
 ![Created the deployment](img/06.png)
 
 Let's see the list of pods created in deployment.
+
 ![Get list of created pods](img/07.png)
 
 Now let's apply nodeport.yaml which we have created.
@@ -98,6 +99,7 @@ spec:
 ![Apply the nodeport.yaml file](img/08.png)
 
 Let's see the existing service.
+
 ![Get list of created pods](img/09.png)
 
 With below command we can get more details about the nodeport. It shows labels, IPs, Port, TargetPort, NodePort...etc
@@ -139,3 +141,66 @@ Bydefauld our application should be accessible on above ip and port. But because
 ```
 172.18.0.2:30001
 ```
+
+### ClusterIP
+
+We can have multiple pods running on front end, and multiple pods running on back end, and we can have data bases as well. Our application has to interract with each other. And these pods should know each other's addresses. There will be internal IP associated with every pod. But that IP is not static. As soon as the pod restart thye IP will get changed. 
+
+So how we would communicate with different pods and services. So how would we ensure our pods are accessible on a name or a certain pod by other services. If our back end wants communicate with our front end pods how would they do that. This is where Cluster IP comming to the picture. 
+
+We create service called(Service Type) Cluster IP. We can access the pods with the name of the service or IPs of the Cluster IP.
+
+![diagram](img/15.png)
+
+If we list the services it will show us the default Cluster IP and with that we can access this cluster. We can create our own ClusterIP ass well. 
+
+![get a svc to list services](img/14.png)
+
+This is how different services and different components interract with each other withing a kubernetes cluster.  
+
+Now let's create Cluster IP with the yaml file we created.
+
+```
+apiVersion: v1
+kind: Service
+metadata: 
+  name: clusterip-svc
+  labels: 
+    env: demo-service
+spec: 
+  type: ClusterIP
+  ports: 
+  - port: 80
+    targetPort: 80
+  selector: 
+    env: demo
+```
+![create ClusterIP and get a svc to list services](img/16.png)
+
+We can get a details of the ClusterIP with bellow command.
+
+```
+kubectl describe svc/clusterip-svc
+```
+
+![describe ClusterIP](img/17.png)
+
+In here this shows parameter called Endpoints. It reprecent the IP addresses of the pods. If we compare it with pods IP addresses we can identify this. We can get Pods IP addresses with bellow command.
+
+```
+kubectl get pods -o wide
+```
+
+![pods IP addresses](img/18.png)
+
+Whenever a pod restart then a new IP will assign to that pod and this Endpoint will also be update over here in the service accordingly and it is listning on port 80.
+
+We can list Endpoints with below commands.
+
+```
+kubectl get endpoints
+
+kubectl get ep
+```
+
+![list of endpoints with above command](img/19.png)
