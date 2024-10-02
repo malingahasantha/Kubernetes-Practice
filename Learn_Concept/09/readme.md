@@ -204,3 +204,49 @@ kubectl get ep
 ```
 
 ![list of endpoints with above command](img/19.png)
+
+### Loadbalancer 
+
+Every pod has a dedicated IP assigned to it and when the pod restart the IP gets changed. We cannot access the pod from it's IP address. not even internally. Becaiuse IP is not static and it's change time to time. So we need something stays persistence throught the lifecycle of the cluster and it is something that doesn't change. That is why we use Service.
+
+Let's say we have a huge application that is distributed across 50 noes for example so you cannot give 50 IP addresses to your user to access the application that's not just a good practice and that's not what they want. They want something simple like "myapp.com" which they can easily remember or through which they can access the application with just one single URL. For that purpose we use something called as load balancer. 
+
+What it will do is, it will keep all these pods in the back end of this load balancer so whenever user is accessing this application they don't have to really access the separate IP addresses of the pods, they can just directly hit the load balancer URL and load balancer based on the load balancing algorithm it will distribute the traffic across multiple pods. 
+
+In kubernetes we actually create an external load balancer. If you are using a cloud provider such as AWS Azure gcp in that you can provision an external load balancer and then you can use a service type as load balancer inside kubernetes.
+
+![loadbalancer diagram](img/19.1.png)
+
+Let's create a loadbalancer with using below yaml.
+
+```
+apiVersion: v1
+kind: Service
+metadata: 
+  name: loadbalancer-svc
+  labels: 
+    env: demo-service
+spec: 
+  type: LoadBalancer
+  ports: 
+  - port: 80
+    targetPort: 80
+  selector: 
+    env: demo
+```
+![create loadbalancer](img/20.png)
+
+Now we have loadbalancer as loadbalancer-svc, and it does not have External IP. It does not have that external IP because our main purpose of using the load balancer is that we can provide this as an IP address or as a DNS to the external users and they can use it.
+
+
+### External Name
+
+The difference of the ExternalName from LoadBalancer is, Under the spec: It specify the type as ExternalName and instead of labels we actually map it to a DNS. For example if our database is listning to this particular DNS : "my.database.example.com", that's what we use as externalName.
+
+```
+spec:
+  type: ExternalName
+  externalName: my.database.example.com
+```
+
+Now our internal Services can refer to the DNS of our application, so this is why we use external name and it's pretty straightforward as per the naming convention.
