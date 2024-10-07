@@ -68,6 +68,8 @@ Different between Replication Controller and ReplicaSet is replication controlle
 * We do that with the help of the another field called selector. Inside that we do match labels. 
 * So we match the labels of the pods that we want to be part of this perticular replica set.
 
+![replicaSet diagram](img/04_1.png)
+
 As an example, let's define environment as demo inside the matchLabels. Every pod that is running with this particular label will now be managed by the ReplicaSet. 
 
 Let's create ReplicaSet using below yaml file.
@@ -136,3 +138,128 @@ Now we can see pod count is updated as we update above.
 ![scale command](img/11.png)
 
 
+### Deployment
+
+Deployment provides an additional functionality to the ReplicaSet. Let's assume these pods are running version 1.1 of engine X because these all are identical pods that means they will be running on the same version as they are part of the same template, and we have to update the version from 1.1 to 1.2. For that we need to roll out the changes.
+
+If we were running the replica set it would apply the changes and it will recreate the Pod all at once and our user will face the downtime. Our active live users on the application will face the downtime for that brief period. 
+
+With deployment we can make the changes in a rolling update fashion so it will update one particular pod over the all pods and while that particular pod is getting updated the traffic is being served from other pods. 
+
+Also it can spin up a new pod to take care of the the traffic that is part of the updating pod until it is up and running. Once the updated pod is up and running it will add it to the load balancer or add it to the ReplicaSet and start serving the traffic. this is the benefit that we get with deployment and we can also roll back the changes to a particular revision or we can undo the changes that have just been done.
+
+![deployment diagram](img/12.png)
+
+Now let's create deployment by applying below deployment yaml.
+
+```
+apiVersion: apps/v1 
+kind: Deployment
+metadata: 
+  name: nginx-deploy
+  labels:
+    env: deploy-demo
+spec: 
+  template:
+    metadata:
+      labels: 
+        env: deploy-demo
+      name: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-rspod
+  replicas: 3
+  selector: 
+    matchLabels: 
+      env: deploy-demo 
+```
+
+Apply the yaml file with below command
+
+```
+kubectl apply -f .\deployments.yaml
+```
+
+Now you can check the current existing pods, ReplicaSets, and Deplyment with below commands.
+
+```
+kubectl get pods
+kubectl get rs
+kubectl get deploy
+```
+Before apply, I have deleted the current ReplicaSet we have created a while ago.
+
+![apply deployment and list the existings](img/13.png)
+
+Below command will return all the objects that are running in our cluster.
+
+```
+kubectl get all
+```
+
+![list all the existing objects](img/14.png)
+
+Now let's do some changers in the image. We can do it two ways.
+* Do the change in yaml file and apply it again
+* Use commandline to apply change
+
+Let's use the second method to change the image version. with below command we can get all the information about objects in the deployment.
+
+```
+kubectl describe deploy/nginx-deploy
+```
+
+Here we can see version is not specify since it is using the latest version. Let's change it to version 1.9.1
+
+![describe the deployment](img/15.png)
+
+Let's do the change with below commands:
+```
+kubectl set image deploy/nginx-deploy nginx-rspod=nginx:1.26.2
+```
+
+![update the image and describe the deployment](img/16.png)
+
+Let's check the rollout history with below command.
+
+```
+kubectl rollout history deploy/nginx-deploy
+```
+
+It shows two revisions. One is the default revision, when we created the object. Second one is when we made the changes.
+
+![rollout history](img/17.png)
+
+We can undo the changes(rollback the changes) we have done with below command. 
+
+```
+kubectl rollout undo deploy/nginx-deploy
+```
+
+If we describe the deployment now, we can see the changes we have done has been rolledback to previous version.
+
+![undo the change](img/18.png)
+
+If we check the rollout history now it will display a new revision.
+
+![undo the change](img/19.png)
+
+#### Create a yaml from dry run
+
+Let's do a dry-run first to create above deployment, and we should specify the image we use as well.
+
+```
+kubectl create deploy deploy/nginx-new --image=nginx --dry-run=client
+```
+![do a dry-run](img/20.png)
+
+Now let's generate the yaml file with below command. add -o yaml to generate a yaml of it and redirect the yaml in to new file > deploy_nex.yaml
+
+```
+kubectl create deploy deploy/nginx-new --image=nginx --dry-run=client -o yaml > deploy_nex.yaml
+```
+
+![generate a yaml file](img/21.png)
+
+![generated yaml file](img/22.png)

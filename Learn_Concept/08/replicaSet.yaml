@@ -28,4 +28,3 @@ spec:
 # If we need to change the count of replicas, we can do the change in yaml file "replica: 5" and save and apply the change again. 
 # Then it will get apply the change make the change instantly.
 # another way of do this change is instead of updating the yaml file you can do the change live object.
-# kubectl edit  

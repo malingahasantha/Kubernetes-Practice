@@ -5,12 +5,12 @@ kind: Deployment
 metadata: 
   name: nginx-deploy
   labels:
-    env: demo
+    env: deploy-demo
 spec: 
   template:
     metadata:
       labels: 
-        env: demo
+        env: deploy-demo
       name: nginx
     spec:
       containers:
@@ -19,7 +19,7 @@ spec:
   replicas: 3
   selector: 
     matchLabels: 
-      env: demo 
+      env: deploy-demo 
 
 
 # If we have to make some changers, if we need to change the image from nginx current version to nginx 1.9.1
