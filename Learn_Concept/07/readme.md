@@ -1,5 +1,15 @@
 # Imperative VS Declarative | Pod in Kubernetes | YAML 
 
+### Pod in Kubernetes
+
+A pod is the smallest unit that exists in Kubernetes. It is similar to that of tokens in C or C++ languages. A specific pod can have one or more applications. The nature of pods is ephemeral, which means that in any case, if a pod fails, Kubernetes can and will automatically create a new replica or duplicate of the said pod and continue the operation. The pods have the capacity to include one or more containers based on the requirements. The containers can even be Docker containers. The pods in Kubernetes provide environmental dependencies, which include persistent storage volumes which means they are permanent and available to all pods in the cluster, and even configuration data that is required to run the container within the pod.
+
+Pods in Kubernetes are like individual workers on a team. Each pod represents a specific task or process running in the cluster. They have their own unique address to communicate with other pods, storage space for saving data, and instructions on how to run their assigned job.
+
+![pods in kubernetes](img/pod.png)
+
+A pod in a Kubernetes cluster indicates a process that is currently operating, and a pod may contain one or more containers. All of those containers share a single IP address, as well as the pod’s storage, network, and any other requirements. A pod is a collection of one or more running containers, allowing for simple container movement within a cluster. 
+
 ### Imperative vs Declarative
 
 Imperative configuration involves creating Kubernetes resources directly at the command line against a Kubernetes cluster. Declarative configuration defines resources within manifest files (It's like a configuration file) and then applies those definitions to the cluster.
