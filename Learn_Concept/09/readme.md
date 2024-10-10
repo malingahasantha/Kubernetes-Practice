@@ -2,10 +2,17 @@
 
 ## Services
 
-Front end application can be accesible from the outside of the cluster, outside the node. can access publically by all the users.
-User access the service between front end and user. That service will then request front end pod on which the service is exposed and it gives the response back to user.
-Sameway another service will be use to access front end to the back end. 
-Sameway this service or any other service will be use to get the data or write something to a external data source. 
+* How do we make sure our application is accessible to the user.
+* How do we makesure our pods are able to communicate with eachother 
+* Add different layesrs, 
+    * our frontend pods should be able to communicate with backend pods and our back end pods should be able to communicate with external data source. 
+
+We do that with the help of services.
+
+
+Front end application should be accesible from outside the cluster, outside the node, and publicly available to all users.
+User access the service between front end and user. That service then communicates with the front-end pod where the service is exposed, get the response, and sends it back to the user. Sameway another service will be use to access the back end from the front end. Similarly this service or any other service will be use to get the data or write something to a external data source. 
+
 
 ![Services Explained.](img/01.png)
 
@@ -135,24 +142,26 @@ What we did is,
 
 When we are running our cluster not on kind, by following the steps we did, our service should be accessible on the node that it is running.
 For example, let's get a pod and describe the pod to find the node that pod is running. 
+
 ![get a pod and describe the pod](img/13.png)
 
-Bydefauld our application should be accessible on above ip and port. But because this is a kind cluster it is exposed on localhost. That is the only difference.
+By default our application should be accessible on above ip and port. But because this is a kind cluster it is exposed on localhost. That is the only difference.
+
 ```
 172.18.0.2:30001
 ```
 
 ### ClusterIP
 
-We can have multiple pods running on front end, and multiple pods running on back end, and we can have data bases as well. Our application has to interract with each other. And these pods should know each other's addresses. There will be internal IP associated with every pod. But that IP is not static. As soon as the pod restart thye IP will get changed. 
+We can have multiple pods running on front end, and multiple pods running on back end, and we can have data bases as well. Our application has to interract with each other. And these pods should know each other's addresses. There will be internal IP associated with every pod. But that IP is not static. As soon as the pod restart the IP will get changed. 
 
-So how we would communicate with different pods and services. So how would we ensure our pods are accessible on a name or a certain pod by other services. If our back end wants communicate with our front end pods how would they do that. This is where Cluster IP comming to the picture. 
+So how we would communicate with different pods and services. So how would we ensure our pods are accessible on a name or a certain pod by other services. If our back end wants to communicate with our front end pods how would they do that. This is where Cluster IP comming to the picture. 
 
 We create service called(Service Type) Cluster IP. We can access the pods with the name of the service or IPs of the Cluster IP.
 
 ![diagram](img/15.png)
 
-If we list the services it will show us the default Cluster IP and with that we can access this cluster. We can create our own ClusterIP ass well. 
+If we list the services it will show us the default Cluster IP and with that we can access this cluster. We can create our own ClusterIP as well. 
 
 ![get a svc to list services](img/14.png)
 
