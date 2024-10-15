@@ -2,13 +2,14 @@
 
 ## Services
 
+A Kubernetes Service is a way to expose a network application running in one or more Pods in your cluster. It provides a fixed IP address that stays the same, even if the Pods change. The Service exists independently of the Pods, so if a Pod stops working or is replaced, the Service and its IP address remain unchanged. This means you don’t need to update the IP address every time a Pod is recreated. What Service does is it provides stable IP address to the Pods. A Kubernetes Service also provides load balancing because when you have pod replicas
+
 * How do we make sure our application is accessible to the user.
 * How do we makesure our pods are able to communicate with eachother 
 * Add different layesrs, 
     * our frontend pods should be able to communicate with backend pods and our back end pods should be able to communicate with external data source. 
 
 We do that with the help of services.
-
 
 Front end application should be accesible from outside the cluster, outside the node, and publicly available to all users.
 User access the service between front end and user. That service then communicates with the front-end pod where the service is exposed, get the response, and sends it back to the user. Sameway another service will be use to access the back end from the front end. Similarly this service or any other service will be use to get the data or write something to a external data source. 
@@ -23,7 +24,24 @@ User access the service between front end and user. That service then communicat
 * External Names
 * Loadbalancers
 
+#### ClusterIP vs NodePort vs LoadBalancer
+
+Here are the key differences between ClusterIP, NodePort, and LoadBalancer services in Kubernetes:
+
+|Feature|ClusterIP|NodePort|LoadBalancer
+|:--------|:----------------:|:--------------------:|:--------------------------:|
+|Accessibility|Accessible only within the cluster|Accessible externally via node’s IP|Accessible externally via cloud load balancer|
+|Use Cases|Internal communication between services|External access for development/testing|External access for production applications|
+|Load Balancing|Load-balanced IP within the cluster|Each node forwards traffic on a specific port|External load balancer distributes traffic|
+|IP Addresses|Single virtual IP address|Each node’s IP address|Typically uses a public IP provided by cloud
+|Scaling|Scales horizontally with additional pods|Scales horizontally with additional nodes|Scales horizontally with additional nodes|
+
+
 ### NodePort
+
+A NodePort is a type of Kubernetes service that opens a specific port on every node in the cluster. This allows external access to the service by forwarding traffic from that port on each node to the Pods targeted by the service. NodePort is useful when you need to access your application from outside the cluster without using a load balancer.
+
+It works by exposing the service on each node’s IP at a fixed port. A ClusterIP service is automatically created, and the NodePort service forwards requests to it, making the service accessible from outside the cluster.
 
 NodePort is the port where the application exposed (Application will exposed to a perticular port). (range for the NodePort is 30000 - 32767)
 
@@ -152,6 +170,8 @@ By default our application should be accessible on above ip and port. But becaus
 ```
 
 ### ClusterIP
+
+A ClusterIP is a type of service in Kubernetes that provides an internal IP address for communication within the cluster. It allows different parts of an application (such as Pods) to talk to each other inside the cluster, but it cannot be accessed from outside the cluster. ClusterIP is the most commonly used service type and is also the default. If you create a service without specifying the type, Kubernetes will automatically set the service as ClusterIP.
 
 We can have multiple pods running on front end, and multiple pods running on back end, and we can have data bases as well. Our application has to interract with each other. And these pods should know each other's addresses. There will be internal IP associated with every pod. But that IP is not static. As soon as the pod restart the IP will get changed. 
 

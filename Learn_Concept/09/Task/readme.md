@@ -1,22 +1,23 @@
 ## 09 Task
 
-1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
+1. Create a Service named ```myapp``` of type ClusterIP that exposes port 80 and maps to the target port 80.
 
-2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
+2. Create a Deployment named ```myapp``` that creates 1 replica running the image ```nginx:1.23.4-alpine```. Expose the container port 80.
 
 3. Scale the Deployment to 2 replicas.
 
-4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
+4. Create a temporary Pod using the image ```busybox``` and run a ```wget``` command against the IP of the service.
 
-5. Run a wget command against the service outside the cluster.
+5. Run a ```wget``` command against the service outside the cluster.
 
 6. Change the service type so the Pods can be reached outside the cluster.
 
-7. Run a wget command against the service outside the cluster.
+7. Run a ```wget``` command against the service outside the cluster.
 
 8. Discuss: Can you expose the Pods as a service without a deployment?
 
-9. Discuss: Under what condition would you use the service types LoadBalancer, node port, clusterIP, and external?
+9. Discuss: Under what condition would you use the service types ```LoadBalancer```, ```nodePort```, ```clusterIP```, and ```external```?
+
 
 
 
@@ -239,3 +240,41 @@ I didn't get endpoints of the pods from ```kubectl describe svc/myapp``` command
 After done the change, in ClusterIP endpoints were appears.
 
 ![describe the service](img/12.png)
+
+
+5. Run a ```wget``` command against the service outside the cluster.
+
+To test the service outside of the cluster, we need to have IP address of the ClusterIP service. Let's get it with below command.
+
+```
+kubectl get svc myapp
+```
+
+![describe the service](img/13.png)
+
+Let's run below command to test service outside of the cluster, 
+
+```
+wget -qO- <clusterIP>
+
+wget -qO- 10.96.208.114
+```
+
+#### Note:
+This is not work since the ClusterIP is only accessible withing the cluster. It cannot be accessed from outside the cluster.
+
+
+6. Change the service type so the Pods can be reached outside the cluster.
+
+Let's update the service type without manually editing and applying the YAML file. We'll do it using the following command (imperative method). It will open a notepad file, and once we update the type and save it, the changes will be automatically applied.
+
+```
+kubectl edit svc myapp
+```
+
+![update the service](img/14.png)
+
+Let's list the service and check if it is updated.
+
+![update the service](img/15.png)
+
