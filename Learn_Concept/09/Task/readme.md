@@ -21,7 +21,7 @@
 
 
 
-1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
+##### 1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
 
 Create below yaml file to create ClusterIP and apply it.
 
@@ -46,7 +46,7 @@ spec:
 ![list the current services](img/02.png)
 
 
-2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
+##### 2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
 
 ```
 apiVersion: apps/v1
@@ -79,7 +79,7 @@ spec:
 ![describe deployment](img/04.png)
 
 
-3. Scale the Deployment to 2 replicas.
+##### 3. Scale the Deployment to 2 replicas.
 
 ```
 kubectl scale deployment myapp --replicas=2
@@ -88,7 +88,7 @@ kubectl scale deployment myapp --replicas=2
 ![scale the deployment](img/05.png)
 
 
-4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
+##### 4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
 
 We can create a temporary Pod using below command.
 
@@ -217,7 +217,7 @@ We can run a wget command against the IP of the service after we interract with 
 
 ![run wget command after we interract with shell](img/08.1.png)
 
-#### Note
+##### Note
 
 To aquire above output ```selector:``` of our clusterip.yaml and ```labels``` of pods in the deployment should be same. When I run the command first time it pop up the below error for me. 
 
@@ -242,7 +242,7 @@ After done the change, in ClusterIP endpoints were appears.
 ![describe the service](img/12.png)
 
 
-5. Run a ```wget``` command against the service outside the cluster.
+##### 5. Run a ```wget``` command against the service outside the cluster.
 
 To test the service outside of the cluster, we need to have IP address of the ClusterIP service. Let's get it with below command.
 
@@ -260,11 +260,11 @@ wget -qO- <clusterIP>
 wget -qO- 10.96.208.114
 ```
 
-#### Note:
+##### Note:
 This is not work since the ClusterIP is only accessible withing the cluster. It cannot be accessed from outside the cluster.
 
 
-6. Change the service type so the Pods can be reached outside the cluster.
+##### 6. Change the service type so the Pods can be reached outside the cluster.
 
 Let's update the service type without manually editing and applying the YAML file. We'll do it using the following command (imperative method). It will open a notepad file, and once we update the type and save it, the changes will be automatically applied.
 
