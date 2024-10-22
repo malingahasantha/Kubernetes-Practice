@@ -22,7 +22,7 @@
 
 ### Answers:
 
-#### 1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
+### 1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
 
 Create below yaml file to create ClusterIP and apply it.
 
@@ -48,7 +48,7 @@ spec:
 
 
 
-#### 2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
+### 2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
 
 ```
 apiVersion: apps/v1
@@ -82,7 +82,7 @@ spec:
 
 
 
-#### 3. Scale the Deployment to 2 replicas.
+### 3. Scale the Deployment to 2 replicas.
 
 ```
 kubectl scale deployment myapp --replicas=2
@@ -92,7 +92,7 @@ kubectl scale deployment myapp --replicas=2
 
 
 
-#### 4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
+### 4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
 
 We can create a temporary Pod using below command.
 
@@ -249,7 +249,7 @@ After done the change, in ClusterIP endpoints were appears.
 
 
 
-#### 5. Run a ```wget``` command against the service outside the cluster.
+### 5. Run a ```wget``` command against the service outside the cluster.
 
 To test the service outside of the cluster, we need to have IP address of the ClusterIP service. Let's get it with below command.
 
@@ -273,7 +273,7 @@ This is not work since the ClusterIP is only accessible withing the cluster. It 
 
 
 
-#### 6. Change the service type so the Pods can be reached outside the cluster.
+### 6. Change the service type so the Pods can be reached outside the cluster.
 
 Let's update the service type without manually editing and applying the YAML file. We'll do it using the following command (imperative method). It will open a notepad file, and once we update the type and save it, the changes will be automatically applied.
 
@@ -289,7 +289,7 @@ Let's list the service and check if it is updated.
 
 
 
-#### 7. Run a ```wget``` command against the service outside the cluster.
+### 7. Run a ```wget``` command against the service outside the cluster.
 
 #### Note:
 Since we are using Kind Cluster and trying to access the service via ```NodePort```, it’s important to note that Kind doesn’t directly expose NodePorts to ```localhost``` as typical Kubernetes clusters do. By default, Kind clusters do not expose NodePorts directly to our localhost. This can lead to the issue where you cannot access the service using ```localhost:NodePort```. So what we can do is we can use port forwarding to access our service from outside the Kind cluster. Kind clusters typically require port forwarding to access services from outside the Kind cluster.
@@ -322,7 +322,7 @@ curl http://localhost:8081
 
 
 
-#### 8. Discuss: Can you expose the Pods as a service without a deployment?
+### 8. Discuss: Can you expose the Pods as a service without a deployment?
 
 Yes, we can expose Pods as a service without a Deployment, but there are some important considerations. 
 
@@ -379,11 +379,11 @@ While we can expose Pods without a Deployment, in production environments, it’
 
 
 
-#### 9. Discuss: Under what condition would you use the service types ```LoadBalancer```, ```nodePort```, ```clusterIP```, and ```external```?
+### 9. Discuss: Under what condition would you use the service types ```LoadBalancer```, ```nodePort```, ```clusterIP```, and ```external```?
 
 In Kubernetes, different types of services are used to expose applications running within the cluster based on their access and networking needs. Here's a detailed discussion of when to use each service type—LoadBalancer, NodePort, ClusterIP, and ExternalName:
 
-#### 1. ClusterIP (Default Service Type)
+### 1. ClusterIP (Default Service Type)
 
 __Use Case:__ Internal communication within the Kubernetes cluster.
 
@@ -397,7 +397,7 @@ __Key Points:__
   * Best for internal communication between services.
 
 
-#### 2. NodePort
+### 2. NodePort
 
 __Use Case:__ Exposing services to be accessed externally via any node's IP and a specified port.
 
@@ -417,7 +417,7 @@ __Key Points:__
   * Not suitable for production unless combined with external load balancing (e.g., using NGINX or MetalLB for load balancing).
 
 
-#### 3. LoadBalancer
+### 3. LoadBalancer
 
 __Use Case:__ Exposing services to the public internet with automatic load balancing.
 
@@ -438,7 +438,7 @@ __Key Points:__
   * More expensive than NodePort since cloud providers charge for LoadBalancer services.
 
 
-#### 4. ExternalName
+### 4. ExternalName
 
 __Use Case:__ Creating a service that acts as an alias to an external DNS address.
 
