@@ -20,8 +20,9 @@
 
 
 
+### Answers:
 
-##### 1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
+#### 1. Create a Service named myapp of type ClusterIP that exposes port 80 and maps to the target port 80.
 
 Create below yaml file to create ClusterIP and apply it.
 
@@ -46,7 +47,8 @@ spec:
 ![list the current services](img/02.png)
 
 
-##### 2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
+
+#### 2. Create a Deployment named myapp that creates 1 replica running the image nginx:1.23.4-alpine. Expose the container port 80.
 
 ```
 apiVersion: apps/v1
@@ -79,7 +81,8 @@ spec:
 ![describe deployment](img/04.png)
 
 
-##### 3. Scale the Deployment to 2 replicas.
+
+#### 3. Scale the Deployment to 2 replicas.
 
 ```
 kubectl scale deployment myapp --replicas=2
@@ -88,7 +91,8 @@ kubectl scale deployment myapp --replicas=2
 ![scale the deployment](img/05.png)
 
 
-##### 4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
+
+#### 4. Create a temporary Pod using the image busybox and run a wget command against the IP of the service.
 
 We can create a temporary Pod using below command.
 
@@ -117,6 +121,7 @@ Once we run above command, a temporary BusyBox Pod will run with name busybox, o
 To run a wget command against the IP of the service, we have to add below part to the command or we can run below part after opens the interactive shell.
 
 Firrst get the IP address of Cluster IP with below command.
+
 ```
 kubectl get svc
 ```
@@ -217,7 +222,8 @@ We can run a wget command against the IP of the service after we interract with 
 
 ![run wget command after we interract with shell](img/08.1.png)
 
-##### Note
+
+#### Note
 
 To aquire above output ```selector:``` of our clusterip.yaml and ```labels``` of pods in the deployment should be same. When I run the command first time it pop up the below error for me. 
 
@@ -242,7 +248,8 @@ After done the change, in ClusterIP endpoints were appears.
 ![describe the service](img/12.png)
 
 
-##### 5. Run a ```wget``` command against the service outside the cluster.
+
+#### 5. Run a ```wget``` command against the service outside the cluster.
 
 To test the service outside of the cluster, we need to have IP address of the ClusterIP service. Let's get it with below command.
 
@@ -260,11 +267,13 @@ wget -qO- <clusterIP>
 wget -qO- 10.96.208.114
 ```
 
-##### Note:
+
+#### Note:
 This is not work since the ClusterIP is only accessible withing the cluster. It cannot be accessed from outside the cluster.
 
 
-##### 6. Change the service type so the Pods can be reached outside the cluster.
+
+#### 6. Change the service type so the Pods can be reached outside the cluster.
 
 Let's update the service type without manually editing and applying the YAML file. We'll do it using the following command (imperative method). It will open a notepad file, and once we update the type and save it, the changes will be automatically applied.
 
@@ -279,9 +288,10 @@ Let's list the service and check if it is updated.
 ![update the service](img/15.png)
 
 
-##### 7. Run a ```wget``` command against the service outside the cluster.
 
-##### Note:
+#### 7. Run a ```wget``` command against the service outside the cluster.
+
+#### Note:
 Since we are using Kind Cluster and trying to access the service via ```NodePort```, it’s important to note that Kind doesn’t directly expose NodePorts to ```localhost``` as typical Kubernetes clusters do. By default, Kind clusters do not expose NodePorts directly to our localhost. This can lead to the issue where you cannot access the service using ```localhost:NodePort```. So what we can do is we can use port forwarding to access our service from outside the Kind cluster. Kind clusters typically require port forwarding to access services from outside the Kind cluster.
 
 To expose the service for external access via port forwarding, run the following command:
@@ -311,7 +321,8 @@ curl http://localhost:8081
 ![check in browser](img/18.png)
 
 
-##### 8. Discuss: Can you expose the Pods as a service without a deployment?
+
+#### 8. Discuss: Can you expose the Pods as a service without a deployment?
 
 Yes, we can expose Pods as a service without a Deployment, but there are some important considerations. 
 
@@ -355,7 +366,7 @@ spec:
 * __Service Selectors:__ When a Pod is deleted and recreated with a different name (because it’s not managed by a Deployment), it can cause issues with the service selector, which might fail to find the new Pod.
 
 
-##### Benefits of Deployment:
+#### Benefits of Deployment:
 A Deployment wraps Pods with management capabilities, offering several key advantages:
 
 * __Replicas:__ You can define how many instances (replicas) of the Pod you want to run.
@@ -368,11 +379,11 @@ While we can expose Pods without a Deployment, in production environments, it’
 
 
 
-##### 9. Discuss: Under what condition would you use the service types ```LoadBalancer```, ```nodePort```, ```clusterIP```, and ```external```?
+#### 9. Discuss: Under what condition would you use the service types ```LoadBalancer```, ```nodePort```, ```clusterIP```, and ```external```?
 
 In Kubernetes, different types of services are used to expose applications running within the cluster based on their access and networking needs. Here's a detailed discussion of when to use each service type—LoadBalancer, NodePort, ClusterIP, and ExternalName:
 
-##### 1. ClusterIP (Default Service Type)
+#### 1. ClusterIP (Default Service Type)
 
 __Use Case:__ Internal communication within the Kubernetes cluster.
 
@@ -386,7 +397,7 @@ __Key Points:__
   * Best for internal communication between services.
 
 
-##### 2. NodePort
+#### 2. NodePort
 
 __Use Case:__ Exposing services to be accessed externally via any node's IP and a specified port.
 
@@ -406,7 +417,7 @@ __Key Points:__
   * Not suitable for production unless combined with external load balancing (e.g., using NGINX or MetalLB for load balancing).
 
 
-##### 3. LoadBalancer
+#### 3. LoadBalancer
 
 __Use Case:__ Exposing services to the public internet with automatic load balancing.
 
@@ -427,7 +438,7 @@ __Key Points:__
   * More expensive than NodePort since cloud providers charge for LoadBalancer services.
 
 
-##### 4. ExternalName
+#### 4. ExternalName
 
 __Use Case:__ Creating a service that acts as an alias to an external DNS address.
 
@@ -444,3 +455,23 @@ __Example Scenario:__
 __Key Points:__
   * Simplifies referencing external services without hardcoding DNS names.
   * Does not involve Pod IPs or cluster networking; it simply forwards the DNS query.
+
+
+
+### Summary Comparison:
+
+| Service Type |	Use Case |	Access Point |	Cloud Provider Integration |
+|:------------:|:-----------------------:|:-----------------------:|:----------------:|
+| ClusterIP |	Internal-only services (e.g., backend services). |	Internal Pods within the cluster |	No |
+| NodePort |	Expose services on all nodes for external access (small setups) |	```<Node IP>:<NodePort>``` |	No |
+| LoadBalancer |	Exposing services to the internet with load balancing |	Cloud provider’s public IP (automated) |	Yes |
+| ExternalName |	Alias for external services (DNS-based) |	External DNS name |	No |
+
+
+
+### Key Takeaways:
+
+* __ClusterIP__ is the default, and it’s ideal for internal communication.
+* __NodePort__ is useful when you need access outside the cluster but don’t have cloud infrastructure to support LoadBalancer or when working in local environments.
+* __LoadBalancer__ is the best for public internet exposure in cloud environments, providing high availability and seamless load balancing.
+* __ExternalName__ is used to integrate external services by creating a DNS alias for services outside the cluster.
