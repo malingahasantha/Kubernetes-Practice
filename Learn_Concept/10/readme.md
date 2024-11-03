@@ -80,3 +80,62 @@ kubectl create namespace demo-namespace
 ```
 
 ![imperative way to create Namespace](img/05.png)
+
+
+Now, let's create deployment in the ```demo-namespace``` using imperative command.
+
+```
+kubectl create deployment nginx-ns-demo --image=nginx --namespace=demo-namespace
+```
+
+or
+
+```
+kubectl create deploy nginx-ns-demo --image=nginx -n demo-namespace
+```
+
+![create deployment in the Namespace](img/06.png)
+
+If we run ```kubectl get deploy``` command without specifying a namespace, it will show the deployments in default namespace. So if we want to list the deployments in a specified namespace, we have to run the command specifying the namespace.
+
+```
+kubectl get deploy --namespace=demo-namespace
+```
+
+![list the deployments in a Namespace](img/07.png)
+
+So everytime if you have to interact with a particular namespace, like whether you are getting any resources from that namespace or you are adding or deleting any resources from that namespace you have to specify the namespace name. 
+
+Now, let's check the communication between two namespaces. To do that let's create a new deployment in the default namespace and try to communicate between pod inside ```demo-namespace``` and pod inside default namespace.
+
+Let's create a new deployment inside default namespace with below command. Here we don't need to specify the namespace since we are creating the deployment in the default namespace.
+
+```
+kubectl create deploy nginx-test --image=nginx
+```
+
+I have split the terminal and left side is demo-namespace and right side is default namespace. Let's get the ip addresses of pods from both namespaces with below command.
+
+```
+kubectl get pods -n demo-namespace -o wide
+```
+```
+kubectl get pods -o wide
+```
+
+![create new deployments inside default namespace](img/08.png)
+
+Go to inside the pods with ```exec``` command. 
+
+```
+kubectl exec -it nginx-ns-demo-5987d8686c-dn6ps -n demo-namespace -- sh
+```
+```
+kubectl exec -it nginx-test-5b77bfd686-zhqvl -- sh
+```
+
+![get the ip addresses of pods inside both namespaces](img/09.png)
+
+Now let's run ```curl <ip address>``` command to access the particular pod. It is working. We can access another pod inside another namespace.
+
+![access the pods from pods inside both namespaces](img/10.png)
