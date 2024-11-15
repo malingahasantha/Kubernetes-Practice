@@ -139,3 +139,77 @@ kubectl exec -it nginx-test-5b77bfd686-zhqvl -- sh
 Now let's run ```curl <ip address>``` command to access the particular pod. It is working. We can access another pod inside another namespace.
 
 ![access the pods from pods inside both namespaces](img/10.png)
+
+
+Now let's scale the deployment to 3 replicas in both default and demo-namespace. Let's do it with below commands.
+
+```
+kubectl scale --replicas=3 deploy/nginx-ns-demo -n demo-namespace
+```
+```
+kubectl scale --replicas=3 deploy/nginx-test
+```
+
+![scale the deployment to 3 replicas in both default and demo-namespace](img/11.png)
+
+Let's see the sceled deployments in both.
+
+pods in namespace
+```
+kubectl get pods -n demo-namespace
+```
+
+pods in default namespace (nginx-test deployment)
+```
+kubectl get pods -l app=nginx-test
+```
+
+![scaled the deployments](img/12.png)
+
+
+Now let's expose service infrontof particular department in both sides. we can achieve this with below commands.
+
+Below is the command use for demo-namespace
+```
+kubectl expose deploy/nginx-ns-demo --name=svc-namespace --port 80 -n=demo-namespace
+```
+
+Below is the command use for default namespace
+```
+kubectl expose deploy/nginx-test --name=svc-test --port 80
+```
+
+![service port exposed to 80 in both namespaces](img/13.png)
+
+Now, let's check whether we are able to access service in default namespace from one of the pod in demo-namespace and access service in demo-namespace from one of the pod in default namespace. First we have to go inside one of the pods in both namespaces.
+
+get the pods list and access one pod with below command.
+```
+kubectl exec -it nginx-ns-demo-5987d8686c-dfpx5 -n demo-namespace -- sh
+```
+```
+kubectl exec -it nginx-test-5b77bfd686-gjwk5 -- sh
+```
+
+Now if we try to curl with service name it gives output as ```Could not resolve host:```. 
+
+![go inside a pod and try to curl service in other namespace](img/14.png)
+
+What we can see here is we are able to reach the pods and services from the different namespaces with different IP addresses, but not from their hostname. Let's check the ```resolv.conf``` file in ```/etc/``` directory. This is the file responsible for doing the IP to DNS resolution internally withing the cluster.
+
+Now we can see we have different hostname that we can use. So if we want to access the service inside particular namespace we have to follow this fully qualified domain name in this ```resolv.conf``` file.
+
+This domain name starts with the namespace name ```<namespace-name>```, then service ```svc```, then ```cluster.local``` as ```<namespace-name>.svc.cluster.local```. In default namespace, the namespace name is ```default```. but format is same.
+
+
+![curl services in both namespaces with domain in resolv.conf](img/15.png)
+
+So far we have two namespaces, one is default and other one is demo-namespace. Inside those we have deployment with three pods and similar setup on both sides. We have exposed this deployment with the help of a service. 
+
+Now we know, that if we need to communicate between Pods withing different namespaces, we can use their IP addresses. However, Pod IP addresses are not static. This is why we use a Service to expose the Deployment, or the Pods within the Deployment outside that specific namespace. To access the Service, we cannot use just the hostname; instead, we can use the fully qualified domain name (FQDN). If we are accessing the Service within the same namespace, we can simply use its direct name as the hostname. (eg:- svc-test, svc-namespace)
+
+When accessing the nginx Pod from one namespace, we were able to reach it using its IP address. This means that IP addresses are cluster-wide. The same IP address can be accessed from anywhere within the cluster, even across different namespaces. However, when we tried to access the Service in one namespace from a Pod in another namespace, we encountered an "access denied" error because the hostname could not be resolved.
+
+This indicates that to access a Service across namespaces, we need to use its fully qualified domain name (FQDN). According to the entries in ```/etc/resolv.conf```, hostnames are not cluster-wide; they are namespace-specific. So hostname of a specific service is specific to it's namespace. If there is a Pod within the same namespace, it can easily communicate with the Service using the hostname because the hostname is namespace wide.
+
+![namespace diagram](img/16.png)
