@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: 11app
+  labels: 
+    name: 11app-pod
+spec:
+  containers:
+  - name: 11app-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo the app is running && sleep 3600']
+    env: 
+    - name: FIRSTNAME
+      value: "Hasantha"
+  initContainers:
+  - name: init-myservice
+    image: busyboz:1.28
+    command:
+    args: ['until nslookup myservice.default.svc.cluster.local; do echo waiting for service to be up; sleep 2; done']
