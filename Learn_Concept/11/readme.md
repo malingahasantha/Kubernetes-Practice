@@ -75,3 +75,64 @@ Below is the explanation of the argument we are going to write. It is a waiting 
 Now let's add the command to main container. Else it will fail as above. I am adding it in a single line. As below we can write command and argument in a single line.
 
 ```command: ['sh', '-c', 'echo the app is running && sleep 3600']```
+
+Now let's apply the yaml.
+
+```
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: 11app
+  labels: 
+    name: 11app-pod
+spec:
+  containers:
+  - name: 11app-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo the app is running && sleep 3600']
+    env: 
+    - name: FIRSTNAME
+      value: "Hasantha"
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args: ['until nslookup myservice.default.svc.cluster.local; do echo waiting for service to be up; sleep 2; done']
+```
+
+![create the updated pod](img/05.png)
+
+![list the updated pod](img/06.png)
+
+Here shows ```READY``` is 0 out of 1 ```0/1```. That means one pod is still not ready. ```STATUS``` shows ```init:0/1``` init 0 out of 1. Init containers that it has, only 0 is available out of 1. It is not running and it is stuck in initialisation state. 
+
+init container try ```nslookup``` on the service host name "fqdn" ```myservice.default.svc.cluster.local``` and until it gets the response it keeps on trying after every 2 seconds. If we check the logs it will show it keep writing the message ```waiting for service to be up```.
+
+Check the logs of the 11app pod ```kubectl logs pod/11app```
+
+![check the logs of the 11app pod](img/07.png)
+
+Check the logs of the init-myservice pod ```kubectl logs pod/11app -c init-myservice```. 
+```-c init-myservice```: This option specifies the specific container within the pod whose logs you want to view.
+
+![check the logs of the init-myservice pod](img/08.png)
+
+
+Now let's create a deployment and expose the service ```myservice```. 
+
+With below comman we create a deployment ```nginx-deploy``` and service ```myservice```, then expose the service to port 80. Service type of this service is Cluster IP. The command defaults to creating a ClusterIP Service, which means it will have an internal IP address within the cluster. To expose the service outside the cluster, we need to specify a different Service type like ```NodePort``` or ```LoadBalancer```.
+
+Create Deployment
+```kubectl create deploy nginx-deploy --image nginx --port 80
+```
+
+Expose the service
+```
+kubectl expose deploy nginx-deploy --name myservice --port 80
+```
+
+Once we expose the service, we can observe the pod transition through the following states: Init:0/1 -> PodInitializing -> Running.
+
+![expose the service and pod is start to run](img/09.png)
+
+That means init container has completed and now the 11app container is up and running.
