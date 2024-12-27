@@ -135,4 +135,23 @@ Once we expose the service, we can observe the pod transition through the follow
 
 ![expose the service and pod is start to run](img/09.png)
 
-That means init container has completed and now the 11app container is up and running.
+That means init container has completed and now the 11app container is up and running. Because the service is now expose and now we can do ```nslookup``` on the service name. Because it is now provisioned.  
+
+Now, if we check the logs we can see it is getting the response back. we are getting the response ```myservice.default.svc.cluster.local```. After that it was stop the printing messages because after that init container job has been done. 
+
+![check the logs](img/10.png)
+
+Now let's check the environment variable we have set. We can check it with below command without entering the container with ```exec``` command.
+
+```kubectl exec -it 11app -- printenv```
+
+![check the environment variable](img/11.png)
+
+We can indeed check the environment variables within a running container by typing ```sh``` after entering the container. Now we can actually enter not just one container. It currently default to 11app-container. But we can enter inside the init-container as well for debugging purpose with ```-c```. 
+
+```kubectl exec -it <pod-name> -c <container-name> -- bash```
+
+![check the environment variable by entering the container](img/12.png)
+
+The way we have created single init-container, we can have multiple containers for multiple reasons. Let's create one more.
+
