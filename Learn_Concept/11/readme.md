@@ -153,5 +153,70 @@ We can indeed check the environment variables within a running container by typi
 
 ![check the environment variable by entering the container](img/12.png)
 
-The way we have created single init-container, we can have multiple containers for multiple reasons. Let's create one more.
+The way we have created single init-container, we can have multiple containers for multiple reasons. Let's create one more init-container and let's name it as mydb. Since this is a list we can create multiple init-containers under this with ```-``` sign.
 
+```
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args: ['until nslookup mydb.default.svc.cluster.local; do echo waiting for service to be up; sleep 2; done']
+```
+
+Below is the yaml file, with the new init-container.
+
+```
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: 11app
+  labels: 
+    name: 11app-pod
+spec:
+  containers:
+  - name: 11app-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo the app is running && sleep 3600']
+    env: 
+    - name: FIRSTNAME
+      value: "Hasantha"
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args: ['until nslookup myservice.default.svc.cluster.local; do echo waiting for service to be up; sleep 2; done']
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args: ['until nslookup mydb.default.svc.cluster.local; do echo waiting for service to be up; sleep 2; done']
+```
+Let's try to apply the ```pod.yaml``` and see if we can apply the changes.
+
+![apply the changers with new init-container](img/13.png)
+
+Yes, we cannot add or remove the init-containers once it is created. So we have to delete the pod first and then create it again.
+
+![apply the changers with new init-container after delete pod](img/14.png)
+
+Let's list the pods now and see.
+
+![list the pods](img/15.png)
+
+It has initialized one init-container. But the 2nd one has not been done. Because the 2nd one is looking for a different service which has not been yet created. That is why the pod is not initialized. 
+
+So we confirmed one more thing, the main application pod to be up and running, all the init-containers inside that pod has to be initialized first.
+
+Now, let's create a more deployment and service for the new init-container and see how it changes the status.
+
+Create deployment name ```mydb``` and we use image as ```redis```.
+
+![create the mydb deployment](img/16.png)
+
+Let's expose the service ```mydb``` now. 
+
+![list services](img/17.png)
+
+Now let's list the pods now and see the status.
+
+![list the pods](img/18.png)
+
+Now our application is running. All the init-pod have been initialized because our service is up and running.
