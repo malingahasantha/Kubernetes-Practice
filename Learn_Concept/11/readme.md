@@ -217,6 +217,8 @@ Let's expose the service ```mydb``` now.
 
 Now let's list the pods now and see the status.
 
-![list the pods](img/18.png)
+![list the services](img/18.png)
 
 Now our application is running. All the init-pod have been initialized because our service is up and running.
+
+![list the pods](img/19.png)
