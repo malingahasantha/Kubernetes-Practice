@@ -1,0 +1,21 @@
+apiVersion: apps/v1 
+kind: DaemonSet
+metadata: 
+  name: nginx-ds
+  labels:
+    env: ds-demo
+spec: 
+  template:
+    metadata:
+      labels: 
+        env: ds-demo
+      name: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-dspod
+        ports: 
+        - containerPort: 80
+  selector: 
+    matchLabels: 
+      env: ds-demo 
