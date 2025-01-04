@@ -66,3 +66,42 @@ If we list the ```pods``` and ```nodes```, we can observe three nodes but only t
 Let's delete one of the Pods. We will see that two Pods are running once again, but with a different name for the replaced Pod. This happens because the Deployment (or ReplicaSet) automatically recreates the missing Pod to maintain the desired number of replicas.
 
 ![list pods delete pods and check listing again](img/03.png)
+
+Let's list DaemonSets with ```kubectl get ds``` command.
+
+![list DaemonSets](img/04.png)
+
+* **NAME:** Name of the DaemonSet.
+* **DESIRED:** Number of nodes that should be running the pod.
+* **CURRENT:** Number of nodes that are currently running the pod.
+* **READY:** Number of nodes that are running a pod and are ready.
+* **UP-TO-DATE:** Number of nodes that have the latest pod version.
+* **AVAILABLE:** Number of nodes with a pod available to serve requests.
+* **NODE SELECTOR:** Node selector criteria for scheduling the DaemonSet.
+* **AGE:** Time since the DaemonSet was created.
+
+Also we can list DaemonSets in a specific namespace with ```kubectl get ds -n <namespace>```
+
+With ```kubectl get ds -A``` command we can lists all DaemonSets across all namespaces in the Kubernetes cluster.
+
+![list all DaemonSets across all namespaces](img/05.png)
+
+Here we can see there are two DaemonSets in ```kube-system``` namespace. ```kindnet``` is created by kind for networking. Other one is ```kube-proxy``` with 3 DESIRED, 3 READY and 3 AVAILABLE replicas. We have 3 nodes in current cluster ```cka-cluster3``` and it deployed ```kube-proxy``` in all 3 nodes.
+
+Let's check the same in single node cluster we have. list current clusters with ```kind get clusters``` command.
+
+![list current clusters](img/06.png)
+
+Let's switch to ```cka-cluster1``` with ```kubectl config use-context kind-cka-cluster1``` command.
+
+![switch to cka-cluster1](img/07.png)
+
+If we list nodes, we can see there is only one node available in this cluster which is the control-plane node.
+
+![list nodes in cka-cluster1](img/08.png)
+
+Now let's lists all DaemonSets across all namespaces in the current cluster ```cka-cluster1```.
+
+![lists all DaemonSets in the current cluster](img/09.png)
+
+Here we can see in both the ```kube-proxy``` and ```kindnet``` DaemonSets have 1 DESIRED, 1 READY and 1 AVAILABLE replicas. This is because we have only 1 available node in current cluster ```cka-cluster1```. Therefore, the DaemonSets have deployed a single pod on this node. 
